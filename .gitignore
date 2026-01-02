@@ -1,18 +1,4 @@
-# ==============================
-# Maven / Java build files
-# ==============================
-
-# Target folder (compiled classes, WAR file)
-target/
-
-# Compiled class files
-*.class
-
-# WAR files
+/target
+*.jar
 *.war
-
-
-# VS Code
-.vscode/
-
-
+*.class

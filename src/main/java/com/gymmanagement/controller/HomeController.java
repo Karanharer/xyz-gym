@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 
 @Controller
 public class HomeController {
@@ -45,15 +45,6 @@ public class HomeController {
     @GetMapping("/refund")
     public String refundPage() {
         return "refund"; 
-    }
-
-    @RestController
-    public class TestController {
-
-        @GetMapping("/test")
-        public String test() {
-            return "WORKING";
-        }
     }
 
 }

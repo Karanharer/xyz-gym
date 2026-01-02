@@ -33,43 +33,43 @@ public class LoginController {
     }
 
         @PostMapping("/login")
-    public String doLogin(
-            @RequestParam String role,
-            @RequestParam String email,
-            @RequestParam String password,
-            HttpSession session,
-            Model model) {
+        public String doLogin(
+                @RequestParam String role,
+                @RequestParam String email,
+                @RequestParam String password,
+                HttpSession session,
+                Model model) {
 
-        switch (role) {
+            switch (role) {
 
-            case "admin":
-                Admin admin = adminService.login(email, password);
-                if (admin != null) {
-                    session.setAttribute("admin", admin);
-                    return "redirect:/admin/dashboard";
-                }
-                break;
+                case "admin":
+                    Admin admin = adminService.login(email, password);
+                    if (admin != null) {
+                        session.setAttribute("admin", admin);
+                        return "redirect:/admin/dashboard";
+                    }
+                    break;
 
-            case "member":
-                Member member = memberService.login(email, password);
-                if (member != null) {
-                    session.setAttribute("member", member);
-                    return "redirect:/member/dashboard";
-                }
-                break;
+                case "member":
+                    Member member = memberService.login(email, password);
+                    if (member != null) {
+                        session.setAttribute("member", member);
+                        return "redirect:/member/dashboard";
+                    }
+                    break;
 
-            case "trainer":
-                Trainer trainer = trainerService.login(email, password);
-                if (trainer != null) {
-                    session.setAttribute("trainer", trainer);
-                    return "redirect:/trainer/dashboard";
-                }
-                break;
+                case "trainer":
+                    Trainer trainer = trainerService.login(email, password);
+                    if (trainer != null) {
+                        session.setAttribute("trainer", trainer);
+                        return "redirect:/trainer/dashboard";
+                    }
+                    break;
+            }
+
+            model.addAttribute("error", "Invalid email or password");
+            return "home";   // popup पुन्हा open होईल
         }
-
-        model.addAttribute("error", "Invalid email or password");
-        return "home";   // popup पुन्हा open होईल
-    }
 
     // ================== LOGOUT ==================
     @GetMapping("/logout")

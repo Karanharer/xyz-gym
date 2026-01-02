@@ -31,18 +31,18 @@ public class HomeController {
         model.addAttribute("plansList", planService.getAllPlans());
         model.addAttribute("topTrainers", trainerService.getTopTrainers());
 
-        return "home"; // templates/home.html
+        return "home"; 
     }
 
     // ✅ Terms popup page
     @GetMapping("/terms")
     public String termsPage() {
-        return "terms"; // templates/terms.html
+        return "terms";
     }
 
     // ✅ Refund popup page
     @GetMapping("/refund")
     public String refundPage() {
-        return "refund"; // templates/refund.html
+        return "refund"; 
     }
 }

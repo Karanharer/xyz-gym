@@ -111,7 +111,7 @@ public class MemberController {
 
     // ================= UPDATE PROFILE =================
     @PostMapping("/updateProfile")
-    public String updateProfile(HttpSession session,
+    public String updateProfilse(HttpSession session,
                                 @RequestParam String name,
                                 @RequestParam String email,
                                 @RequestParam String phone,
@@ -134,14 +134,15 @@ public class MemberController {
         model.addAttribute("success", "Profile updated successfully!");
         model.addAttribute("member", member);
 
-        return "member/dashboard";
+        return "member-dashboard";
+
     }
 
 
 
     // ================= PLAN SELECTION =================
     @PostMapping("/selectPlan")
-    public String selectPlan(HttpSession session,
+    public String selectPlans(HttpSession session,
                             @RequestParam int planId,
                             Model model) {
 
@@ -169,7 +170,7 @@ public class MemberController {
 
     @PostMapping("/paymentSuccess")
     @ResponseBody
-    public String paymentSuccess(HttpSession session,
+    public String paymentSuccesss(HttpSession session,
                                 @RequestParam String razorpayPaymentId) {
 
         Member member = (Member) session.getAttribute("member");
@@ -205,7 +206,7 @@ public class MemberController {
 
     // ================= LOGOUT =================
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logouts(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
     }

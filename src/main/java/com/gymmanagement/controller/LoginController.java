@@ -26,7 +26,13 @@ public class LoginController {
     private TrainerService trainerService;
 
     // ================== LOGIN PROCESS ==================
-    @PostMapping("/login")
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "home"; // login popup असलेला page
+    }
+
+        @PostMapping("/login")
     public String doLogin(
             @RequestParam String role,
             @RequestParam String email,
@@ -69,6 +75,6 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/home";
+        return "redirect:/";
     }
 }

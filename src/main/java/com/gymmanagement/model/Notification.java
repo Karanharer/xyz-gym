@@ -1,6 +1,8 @@
 package com.gymmanagement.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,6 +18,9 @@ public class Notification {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    
+    @Column(nullable = true)
+    private LocalDate expiryDate;  // Notification कधी ex
 
     @Column(length = 20)
     private String type;   // INFO, SUCCESS, WARNING, ERROR
@@ -72,5 +77,15 @@ public class Notification {
     public void setType(String type) {
         this.type = type;
     }
+
+    // Getter & Setter
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
 }
 

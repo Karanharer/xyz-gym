@@ -22,7 +22,7 @@ public class AdminController {
     @Autowired PlanService planService;
     @Autowired PaymentService paymentService;
     @Autowired NotificationService notificationService;
-
+s
     private boolean admin(HttpSession s){
         return s.getAttribute("admin") != null;
     }

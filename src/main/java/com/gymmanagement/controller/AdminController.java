@@ -50,30 +50,34 @@ public class AdminController {
             return "redirect:/login";
         }
 
-        // BASIC DATA
+        // ===== BASIC DATA =====
         model.addAttribute("members", memberService.getAllMembers());
         model.addAttribute("plans", planService.getAllPlans());
         model.addAttribute("payments", paymentService.getAllPayments());
         model.addAttribute("notifications", notificationService.latestActive());
 
-        // ================= PLAN-WISE REVENUE (NO THYMELEAF LOGIC) =================
+        // ===== PLAN WISE REVENUE (CHART SAFE DATA) =====
         List<Payment> payments = paymentService.getAllPayments();
+
         Map<String, Double> revenueByPlan = new HashMap<>();
 
         for (Payment p : payments) {
             if (p.getPlan() != null) {
                 String planName = p.getPlan().getPlanName();
                 revenueByPlan.put(
-                        planName,
-                        revenueByPlan.getOrDefault(planName, 0.0) + p.getAmount()
+                    planName,
+                    revenueByPlan.getOrDefault(planName, 0.0) + p.getAmount()
                 );
             }
         }
 
-        model.addAttribute("revenueByPlan", revenueByPlan);
+        // 🔥 Chart.js needs arrays, not map
+        model.addAttribute("chartLabels", revenueByPlan.keySet());
+        model.addAttribute("chartValues", revenueByPlan.values());
 
         return "admin-dashboard";
     }
+
 
     // ================= MEMBER EDIT =================
     @PostMapping("/editMember")

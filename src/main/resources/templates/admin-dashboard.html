@@ -199,21 +199,30 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 
-const labels = [[${#lists.map(revenue, r -> r.plan)}]];
-const values = [[${#lists.map(revenue, r -> r.total)}]];
+const labels = [[${chartLabels}]];
+const values = [[${chartValues}]];
 
 new Chart(document.getElementById("revenueChart"), {
     type: 'bar',
     data: {
         labels: labels,
         datasets: [{
-            data: values
+            label: 'Revenue',
+            data: values,
+            backgroundColor: '#4caf50'
         }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        }
     }
 });
 
 /*]]>*/
 </script>
+
 
 <script>
 /* ===== EDIT MEMBER ===== */

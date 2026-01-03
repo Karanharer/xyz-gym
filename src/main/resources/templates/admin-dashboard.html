@@ -122,13 +122,12 @@
         <tr th:each="m : ${members}">
             <td th:text="${m.name}"></td>
             <td th:text="${m.email}"></td>
-            <td th:text="${m.plan.planName}"></td>
+            <td th:text="${m.plan != null ? m.plan.planName : 'No Plan'}"></td>
             <td>
-                <!-- ✅ FIXED BUTTON -->
                 <button class="btn btn-sm btn-warning edit-btn"
                         th:attr="data-id=${m.id},
-                                 data-name=${m.name},
-                                 data-email=${m.email}">
+                                data-name=${m.name},
+                                data-email=${m.email}">
                     Edit
                 </button>
 
@@ -159,7 +158,7 @@
         <tbody>
         <tr th:each="p : ${payments}">
             <td th:text="${p.member.name}"></td>
-            <td th:text="${p.plan.planName}"></td>
+            <td th:text="${p.plan != null ? p.plan.planName : 'N/A'}"></td>
             <td th:text="'₹' + ${p.amount}"></td>
             <td th:text="${p.date}"></td>
         </tr>

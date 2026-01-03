@@ -1,15 +1,18 @@
 package com.gymmanagement.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationService {
 
-    public Object latestActive() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private List<String> notifications = new ArrayList<>();
+
+    public List<String> latestActive() {
+        return notifications; // dummy list
     }
 
-    public void save(String string, LocalDate plusDays) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void save(String msg, LocalDate date) {
+        notifications.add(msg + " (Expiry: " + date.toString() + ")");
     }
-    
 }

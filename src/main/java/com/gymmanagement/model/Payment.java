@@ -61,11 +61,16 @@ public class Payment {
         this.mode = mode;
     }
 
-    public Object getPlan() {
-        throw new UnsupportedOperationException("Not supported yet.");
+   @ManyToOne
+    @JoinColumn(name="plan_id")  
+    private Plan plan;
+
+    public Plan getPlan() {
+        return plan;
     }
 
-    public void setPlan(Plan p) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
+
 }

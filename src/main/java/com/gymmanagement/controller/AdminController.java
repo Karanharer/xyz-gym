@@ -36,6 +36,7 @@ public class AdminController {
         m.addAttribute("notifications", notificationService.latestActive());
         m.addAttribute("revenue", paymentService.planWiseRevenue());
 
+
         return "admin-dashboard";
     }
 

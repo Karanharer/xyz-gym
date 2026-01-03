@@ -60,4 +60,12 @@ public class Payment {
     public void setMode(String mode) {
         this.mode = mode;
     }
+
+    public Object getPlan() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setPlan(Plan p) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

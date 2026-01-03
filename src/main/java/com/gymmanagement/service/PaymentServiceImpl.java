@@ -1,15 +1,15 @@
 package com.gymmanagement.service;
 
 import com.gymmanagement.model.Payment;
+import com.gymmanagement.model.Member;
+import com.gymmanagement.model.Plan;
 import com.gymmanagement.repository.PaymentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import com.gymmanagement.model.Member;
-import com.gymmanagement.model.Plan;
+import java.util.*;
+import java.time.LocalDate;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -35,11 +35,24 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void savePayment(Member m, Plan p) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Payment payment = new Payment();
+        payment.setMember(m);
+        payment.setPlan(p);
+        payment.setAmount(p.getPrice());
+        payment.setPaymentDate(java.sql.Date.valueOf(LocalDate.now()));
+        paymentRepository.save(payment);
     }
 
     @Override
-    public Object planWiseRevenue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Map<String, Double> planWiseRevenue() {
+        List<Payment> payments = paymentRepository.findAll();
+        Map<String, Double> revenueMap = new HashMap<>();
+
+        for(Payment p : payments){
+            String planName = ((Plan) p.getPlan()).getPlanName();
+            revenueMap.put(planName, revenueMap.getOrDefault(planName, 0.0) + p.getAmount());
+        }
+
+        return revenueMap;
     }
 }

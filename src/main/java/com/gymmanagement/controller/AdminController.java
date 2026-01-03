@@ -101,7 +101,7 @@ public class AdminController {
         return "deleted";
     }
 
-    // ================= ASSIGN PLAN =================
+    // ================= ASSIGN PLAN  =================
     @PostMapping("/assignPlan")
     @ResponseBody
     public ResponseEntity<String> assignPlan(
@@ -109,34 +109,35 @@ public class AdminController {
             @RequestParam int memberId,
             @RequestParam int planId) {
 
+        // 1️⃣ Admin check
         if (!admin(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
         }
 
-        Optional<Member> optMember = memberService.findById(memberId);
-        if (optMember.isEmpty()) {
+        // 2️⃣ Get member (FIXED METHOD)
+        Member member = memberService.getById(memberId);
+        if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("member_not_found");
         }
 
-        Optional<Plan> optPlan = planService.findById(planId);
-        if (optPlan.isEmpty()) {
+        // 3️⃣ Get plan (FIXED METHOD)
+        Plan plan = planService.getById(planId);
+        if (plan == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("plan_not_found");
         }
 
-        Member member = optMember.get();
-        Plan plan = optPlan.get();
-
-        // Assign plan & expiry
+        // 4️⃣ Assign plan & expiry
         LocalDate expiry = LocalDate.now().plusMonths(plan.getDurationMonths());
         member.setPlan(plan);
         member.setExpiryDate(java.sql.Date.valueOf(expiry));
 
+        // 5️⃣ Save member
         memberService.saveMember(member);
 
-        // Save payment
+        // 6️⃣ Save payment
         paymentService.savePayment(member, plan);
 
-        // Save notification
+        // 7️⃣ Notification
         notificationService.save(
                 "Plan " + plan.getPlanName() + " assigned to " + member.getName(),
                 LocalDate.now().plusDays(3)
@@ -144,4 +145,5 @@ public class AdminController {
 
         return ResponseEntity.ok("assigned");
     }
+
 }

@@ -8,20 +8,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service  
+@Service
 public class NotificationService {
 
     @Autowired
     private NotificationRepository notificationRepository;
 
+    // Active notifications for dashboard
     public List<Notification> latestActive() {
-        return notificationRepository.findByExpiryDateGreaterThanEqual(LocalDate.now());
+        return notificationRepository.findByExpiryDateGreaterThanEqualOrExpiryDateIsNull(LocalDate.now());
     }
 
-    public void save(String msg, LocalDate expiryDate) {
-        Notification n = new Notification();
-        n.setMessage(msg);
-        n.setExpiryDate(expiryDate);
+    // Save new notification with expiry date
+    public void save(String message, LocalDate expiryDate) {
+        Notification n = new Notification(message, expiryDate);
         notificationRepository.save(n);
     }
 }

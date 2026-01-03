@@ -1,9 +1,8 @@
 package com.gymmanagement.model;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "notifications")
@@ -18,74 +17,38 @@ public class Notification {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-    
-    @Column(nullable = true)
-    private LocalDate expiryDate;  // Notification कधी ex
 
     @Column(length = 20)
     private String type;   // INFO, SUCCESS, WARNING, ERROR
 
-    // ================= CONSTRUCTORS =================
+    @Column(nullable = true)
+    private LocalDate expiryDate; // Notification expiry
 
     public Notification() {
         this.createdAt = LocalDateTime.now();
         this.type = "INFO";
     }
 
-    public Notification(String message) {
+    public Notification(String message, LocalDate expiryDate) {
         this.message = message;
+        this.expiryDate = expiryDate;
         this.createdAt = LocalDateTime.now();
         this.type = "INFO";
     }
 
-    public Notification(String message, String type) {
-        this.message = message;
-        this.type = type;
-        this.createdAt = LocalDateTime.now();
-    }
+    // GETTERS & SETTERS
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    // ================= GETTERS & SETTERS =================
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
-    public int getId() {
-        return id;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    // Getter & Setter
-    public LocalDate getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
 }
-

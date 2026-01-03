@@ -5,6 +5,8 @@ import com.gymmanagement.service.*;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -79,28 +81,51 @@ public class AdminController {
         return "deleted";
     }
 
-    // ================= ASSIGN PLAN =================
+        // ================= ASSIGN PLAN =================
     @PostMapping("/assignPlan")
     @ResponseBody
-    public String assignPlan(HttpSession s,int memberId,int planId){
-        if(!admin(s)) return "unauthorized";
+    public ResponseEntity<String> assignPlan(HttpSession session,
+                                            @RequestParam int memberId,
+                                            @RequestParam int planId) {
+        // 1️⃣ Authorization check
+        if (!admin(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
+        }
 
-        Member m=memberService.getById(memberId);
-        Plan p=planService.getById(planId);
+        // 2️⃣ Fetch Member
+        Optional<Member> optMember = memberService.findById(memberId);
+        if (optMember.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("member_not_found");
+        }
+        Member member = optMember.get();
 
-        m.setPlan(p);
-        m.setExpiryDate(
-            java.sql.Date.valueOf(
-                LocalDate.now().plusMonths(p.getDurationMonths())
-            )
-        );
-        memberService.saveMember(m);
+        // 3️⃣ Fetch Plan
+        Optional<Plan> optPlan = planService.findById(planId);
+        if (optPlan.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("plan_not_found");
+        }
+        Plan plan = optPlan.get();
 
-        paymentService.savePayment(m,p);
+        // 4️⃣ Set plan and expiry date
+        LocalDate expiry = LocalDate.now().plusMonths(plan.getDurationMonths());
+        member.setPlan(plan);
+        member.setExpiryDate(java.sql.Date.valueOf(expiry));
+
+        // 5️⃣ Save updated member
+        memberService.saveMember(member);
+
+        // 6️⃣ Save payment
+        paymentService.savePayment(member, plan);
+
+        // 7️⃣ Save notification for admin/member
+        LocalDate notifyDate = LocalDate.now().plusDays(3); // Notify 3 days later
         notificationService.save(
-            "Plan "+p.getPlanName()+" assigned to "+m.getName(),
-            LocalDate.now().plusDays(3)
+                "Plan " + plan.getPlanName() + " assigned to " + member.getName(),
+                notifyDate
         );
-        return "assigned";
+
+        // 8️⃣ Return success response
+        return ResponseEntity.ok("assigned");
     }
+
 }

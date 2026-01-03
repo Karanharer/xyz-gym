@@ -2,6 +2,7 @@ package com.gymmanagement.controller;
 
 import com.gymmanagement.model.Member;
 import com.gymmanagement.model.Plan;
+import com.gymmanagement.model.Payment;
 import com.gymmanagement.service.MemberService;
 import com.gymmanagement.service.PlanService;
 import com.gymmanagement.service.PaymentService;
@@ -16,7 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -42,15 +45,32 @@ public class AdminController {
     // ================= DASHBOARD =================
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
+
         if (!admin(session)) {
             return "redirect:/login";
         }
 
+        // BASIC DATA
         model.addAttribute("members", memberService.getAllMembers());
         model.addAttribute("plans", planService.getAllPlans());
         model.addAttribute("payments", paymentService.getAllPayments());
         model.addAttribute("notifications", notificationService.latestActive());
-        model.addAttribute("revenue", paymentService.planWiseRevenue());
+
+        // ================= PLAN-WISE REVENUE (NO THYMELEAF LOGIC) =================
+        List<Payment> payments = paymentService.getAllPayments();
+        Map<String, Double> revenueByPlan = new HashMap<>();
+
+        for (Payment p : payments) {
+            if (p.getPlan() != null) {
+                String planName = p.getPlan().getPlanName();
+                revenueByPlan.put(
+                        planName,
+                        revenueByPlan.getOrDefault(planName, 0.0) + p.getAmount()
+                );
+            }
+        }
+
+        model.addAttribute("revenueByPlan", revenueByPlan);
 
         return "admin-dashboard";
     }
@@ -59,6 +79,7 @@ public class AdminController {
     @PostMapping("/editMember")
     @ResponseBody
     public String editMember(HttpSession session, @ModelAttribute Member member) {
+
         if (!admin(session)) return "unauthorized";
 
         memberService.saveMember(member);
@@ -69,6 +90,7 @@ public class AdminController {
     @PostMapping("/deleteMember")
     @ResponseBody
     public String deleteMember(HttpSession session, @RequestParam int id) {
+
         if (!admin(session)) return "unauthorized";
 
         memberService.deleteMember(id);
@@ -79,6 +101,7 @@ public class AdminController {
     @PostMapping("/addPlan")
     @ResponseBody
     public String addPlan(HttpSession session, @ModelAttribute Plan plan) {
+
         if (!admin(session)) return "unauthorized";
 
         planService.savePlan(plan);
@@ -95,13 +118,14 @@ public class AdminController {
     @PostMapping("/deletePlan")
     @ResponseBody
     public String deletePlan(HttpSession session, @RequestParam int id) {
+
         if (!admin(session)) return "unauthorized";
 
         planService.deletePlan(id);
         return "deleted";
     }
 
-    // ================= ASSIGN PLAN  =================
+    // ================= ASSIGN PLAN =================
     @PostMapping("/assignPlan")
     @ResponseBody
     public ResponseEntity<String> assignPlan(
@@ -114,13 +138,13 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
         }
 
-        // 2️⃣ Get member (FIXED METHOD)
+        // 2️⃣ Member fetch (FIXED)
         Member member = memberService.getById(memberId);
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("member_not_found");
         }
 
-        // 3️⃣ Get plan (FIXED METHOD)
+        // 3️⃣ Plan fetch (FIXED)
         Plan plan = planService.getById(planId);
         if (plan == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("plan_not_found");
@@ -145,5 +169,4 @@ public class AdminController {
 
         return ResponseEntity.ok("assigned");
     }
-
 }

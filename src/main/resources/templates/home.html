@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>XYZ Gym - Home</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLoginModal()">&times;</span>
+
+        <h2>Login to XYZ Gym</h2>
+
+        <form th:action="@{/login}" method="post">
+            <select name="role" required>
+                <option value="">Select Role</option>
+                <option value="admin">Admin</option>
+                <option value="member">Member</option>
+                <option value="trainer">Trainer</option>
+            </select>
+
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+
+            <button type="submit" class="btn primary">Login</button>
+        </form>
+
+        <!-- error -->
+        <div th:if="${error}">
+            <script>
+                window.onload = () => openLoginModal();
+            </script>
+        </div>
+
+        <p>
+            Don't have an account?
+            <a href="javascript:void(0)" onclick="openRegisterPopup()">Sign Up</a>
+        </p>
+    </div>
+</div>
+
+<!-- ================= REGISTER MODAL ================= -->
+<div id="registerPopup" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeRegisterPopup()">&times;</span>
+
+        <h2>Register at XYZ Gym</h2>
+
+        <form th:action="@{/member/register}" method="post">
+            <select name="role" required>
+                <option value="">Select Role</option>
+                <option value="member">Member</option>
+            </select>
+
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="number" name="phone" placeholder="Phone" required>
+
+            <select name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <input type="text" name="addressline1" placeholder="Address Line" required>
+
+            <button type="submit" class="btn primary">Register</button>
+        </form>
+
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+        <p class="success" th:if="${success}" th:text="${success}"></p>
+    </div>
+</div>
+
+<!-- ================= NAVBAR ================= -->
+<header>
+    <nav class="navbar">
+        <div class="nav-left">
+            <img th:src="@{/images/logo.png}" class="logo-img" alt="Logo">
+            <span class="logo-text">XYZ GYM</span>
+        </div>
+
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a href="#plans">Plans</a></li>
+            <li><a href="#trainers">Trainers</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li>
+                <button class="login-btn" onclick="openLoginModal()">Login</button>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <h1>Build Your Body<br><span>Transform Your Life</span></h1>
+        <p>Join XYZ Gym – Where Fitness Becomes Lifestyle</p>
+
+        <div class="hero-buttons">
+            <button class="btn primary" onclick="openLoginModal()">Join Now</button>
+            <a href="#plans" class="btn secondary">View Plans</a>
+        </div>
+    </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section class="stats">
+    <div class="stat-card">
+        <h2 th:text="${membersCount}">0</h2>
+        <p>Members</p>
+    </div>
+    <div class="stat-card">
+        <h2 th:text="${trainersCount}">0</h2>
+        <p>Trainers</p>
+    </div>
+    <div class="stat-card">
+        <h2 th:text="${plansCount}">0</h2>
+        <p>Plans</p>
+    </div>
+</section>
+
+<!-- ================= PLANS ================= -->
+<section class="plans" id="plans">
+    <h2>Membership Plans</h2>
+    <p class="section-subtitle">Flexible plans designed to fit your fitness goals</p>
+
+    <div class="plan-grid">
+        <div class="plan-card" th:each="plan : ${plansList}">
+            <h3 th:text="${plan.planName}"></h3>
+            <p th:text="${plan.durationMonths + ' Months'}"></p>
+            <h4>₹ <span th:text="${plan.price}"></span></h4>
+
+            <button class="btn primary small" onclick="openLoginModal()">Get Started</button>
+        </div>
+    </div>
+</section>
+
+<!-- ================= TRAINERS ================= -->
+<section class="trainers" id="trainers">
+    <h2>Our Trainers</h2>
+
+    <div class="trainer-grid">
+        <div class="trainer-card" th:each="trainer : ${topTrainers}">
+            <img th:src="@{/images/trainer-placeholder.jpg}">
+            <h4 th:text="${trainer.name}"></h4>
+        </div>
+    </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact-section" id="contact">
+    <h2>Contact Us</h2>
+    <p>We’re here to help you start your fitness journey</p>
+
+    <div class="contact-grid">
+        <div class="contact-item">
+            <i class="fa fa-phone"></i>
+            <h4>Phone</h4>
+            <p>+91 8055343217</p>
+        </div>
+
+        <div class="contact-item">
+            <i class="fa fa-envelope"></i>
+            <h4>Email</h4>
+            <p>karanharer094@gmail.com</p>
+        </div>
+
+        <div class="contact-item">
+            <i class="fa fa-location-dot"></i>
+            <h4>Address</h4>
+            <p>Pune, Maharashtra, India</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="footer-links">
+        <a href="javascript:void(0)" onclick="openTermsPopup()">Terms & Conditions</a>
+        <a href="javascript:void(0)" onclick="openRefundPopup()">Cancellation & Refund Policy</a>
+        <a href="#contact">Contact Us</a>
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 XYZ Gym | All Rights Reserved
+    </div>
+</footer>
+
+<script th:src="@{/js/home.js}"></script>
+</body>
+</html>

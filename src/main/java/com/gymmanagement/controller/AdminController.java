@@ -1,7 +1,11 @@
 package com.gymmanagement.controller;
 
-import com.gymmanagement.model.*;
-import com.gymmanagement.service.*;
+import com.gymmanagement.model.Member;
+import com.gymmanagement.model.Plan;
+import com.gymmanagement.service.MemberService;
+import com.gymmanagement.service.PlanService;
+import com.gymmanagement.service.PaymentService;
+import com.gymmanagement.service.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,32 +16,41 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired MemberService memberService;
-    @Autowired PlanService planService;
-    @Autowired PaymentService paymentService;
-    @Autowired NotificationService notificationService;
-s
-    private boolean admin(HttpSession s){
-        return s.getAttribute("admin") != null;
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private PlanService planService;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    // ================= ADMIN SESSION CHECK =================
+    private boolean admin(HttpSession session) {
+        return session.getAttribute("admin") != null;
     }
 
     // ================= DASHBOARD =================
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession s, Model m){
-        if(!admin(s)) return "redirect:/login";
+    public String dashboard(HttpSession session, Model model) {
+        if (!admin(session)) {
+            return "redirect:/login";
+        }
 
-        m.addAttribute("members", memberService.getAllMembers());
-        m.addAttribute("plans", planService.getAllPlans());
-        m.addAttribute("payments", paymentService.getAllPayments());
-        m.addAttribute("notifications", notificationService.latestActive());
-        m.addAttribute("revenue", paymentService.planWiseRevenue());
-
+        model.addAttribute("members", memberService.getAllMembers());
+        model.addAttribute("plans", planService.getAllPlans());
+        model.addAttribute("payments", paymentService.getAllPayments());
+        model.addAttribute("notifications", notificationService.latestActive());
+        model.addAttribute("revenue", paymentService.planWiseRevenue());
 
         return "admin-dashboard";
     }
@@ -45,8 +58,9 @@ s
     // ================= MEMBER EDIT =================
     @PostMapping("/editMember")
     @ResponseBody
-    public String editMember(HttpSession s, Member member){
-        if(!admin(s)) return "unauthorized";
+    public String editMember(HttpSession session, @ModelAttribute Member member) {
+        if (!admin(session)) return "unauthorized";
+
         memberService.saveMember(member);
         return "updated";
     }
@@ -54,78 +68,80 @@ s
     // ================= MEMBER DELETE =================
     @PostMapping("/deleteMember")
     @ResponseBody
-    public String deleteMember(HttpSession s, int id){
-        if(!admin(s)) return "unauthorized";
+    public String deleteMember(HttpSession session, @RequestParam int id) {
+        if (!admin(session)) return "unauthorized";
+
         memberService.deleteMember(id);
         return "deleted";
     }
 
-    // ================= PLAN =================
+    // ================= PLAN ADD =================
     @PostMapping("/addPlan")
     @ResponseBody
-    public String addPlan(HttpSession s, Plan p){
-        if(!admin(s)) return "unauthorized";
-        planService.savePlan(p);
+    public String addPlan(HttpSession session, @ModelAttribute Plan plan) {
+        if (!admin(session)) return "unauthorized";
+
+        planService.savePlan(plan);
+
         notificationService.save(
-            "New Plan Added : "+p.getPlanName(),
-            LocalDate.now().plusDays(2)
+                "New Plan Added : " + plan.getPlanName(),
+                LocalDate.now().plusDays(2)
         );
+
         return "added";
     }
 
+    // ================= PLAN DELETE =================
     @PostMapping("/deletePlan")
     @ResponseBody
-    public String deletePlan(HttpSession s, int id){
-        if(!admin(s)) return "unauthorized";
+    public String deletePlan(HttpSession session, @RequestParam int id) {
+        if (!admin(session)) return "unauthorized";
+
         planService.deletePlan(id);
         return "deleted";
     }
 
-        // ================= ASSIGN PLAN =================
+    // ================= ASSIGN PLAN =================
     @PostMapping("/assignPlan")
     @ResponseBody
-    public ResponseEntity<String> assignPlan(HttpSession session,
-                                            @RequestParam int memberId,
-                                            @RequestParam int planId) {
-        // 1️⃣ Authorization check
+    public ResponseEntity<String> assignPlan(
+            HttpSession session,
+            @RequestParam int memberId,
+            @RequestParam int planId) {
+
         if (!admin(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
         }
 
-        // 2️⃣ Fetch Member
         Optional<Member> optMember = memberService.findById(memberId);
         if (optMember.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("member_not_found");
         }
-        Member member = optMember.get();
 
-        // 3️⃣ Fetch Plan
         Optional<Plan> optPlan = planService.findById(planId);
         if (optPlan.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("plan_not_found");
         }
+
+        Member member = optMember.get();
         Plan plan = optPlan.get();
 
-        // 4️⃣ Set plan and expiry date
+        // Assign plan & expiry
         LocalDate expiry = LocalDate.now().plusMonths(plan.getDurationMonths());
         member.setPlan(plan);
         member.setExpiryDate(java.sql.Date.valueOf(expiry));
 
-        // 5️⃣ Save updated member
         memberService.saveMember(member);
 
-        // 6️⃣ Save payment
+        // Save payment
         paymentService.savePayment(member, plan);
 
-        // 7️⃣ Save notification for admin/member
-        LocalDate notifyDate = LocalDate.now().plusDays(3); // Notify 3 days later
+        // Save notification
         notificationService.save(
                 "Plan " + plan.getPlanName() + " assigned to " + member.getName(),
-                notifyDate
+                LocalDate.now().plusDays(3)
         );
 
-        // 8️⃣ Return success response
         return ResponseEntity.ok("assigned");
     }
-
 }

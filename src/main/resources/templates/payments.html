@@ -24,16 +24,12 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    const razorpayKeyId = [[${razorpayKeyId}]];
-    const planPrice = [[${plan.price}]];
-    const planId = [[${plan.id}]];
-
     var options = {
-        key: razorpayKeyId,
-        amount: planPrice * 100,
+        key: /*[[${razorpayKeyId}]]*/ "",
+        amount: /*[[${plan.price}]]*/ 0 * 100,
         currency: "INR",
         name: "XYZ Gym",
-        description: "[[${plan.planName}]] Plan",
+        description: /*[['' + ${plan.planName} + ' Plan']]*/ "",
 
         handler: function (response) {
             fetch("/member/paymentSuccess", {
@@ -43,7 +39,7 @@
                 },
                 body:
                     "razorpayPaymentId=" + response.razorpay_payment_id +
-                    "&planId=" + planId
+                    "&planId=" + /*[[${plan.id}]]*/ 0
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
@@ -61,8 +57,6 @@
 
     /*]]>*/
 </script>
-
-
 
 </body>
 </html>

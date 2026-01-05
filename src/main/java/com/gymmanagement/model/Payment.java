@@ -14,32 +14,45 @@ public class Payment {
     // ===============================
     // MEMBER
     // ===============================
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     // ===============================
     // PLAN
     // ===============================
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
     // ===============================
     // PAYMENT DETAILS
     // ===============================
+    @Column(nullable = false)
     private double amount;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "payment_date")
     private Date paymentDate;
 
-    private String mode;   // ONLINE / CASH / CARD
+    // ONLINE / CASH / CARD
+    @Column(length = 20)
+    private String mode;
 
-    private String status; // SUCCESS / FAILED / PENDING
+    // SUCCESS / FAILED / PENDING
+    @Column(length = 20)
+    private String status;
+
+    // ===============================
+    // RAZORPAY DETAILS
+    // ===============================
+    @Column(name = "razorpay_payment_id", length = 100)
+    private String razorpayPaymentId;
 
     // ===============================
     // GETTERS & SETTERS
     // ===============================
+
     public int getId() {
         return id;
     }
@@ -94,5 +107,13 @@ public class Payment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+
+    public void setRazorpayPaymentId(String razorpayPaymentId) {
+        this.razorpayPaymentId = razorpayPaymentId;
     }
 }

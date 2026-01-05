@@ -27,25 +27,6 @@ public class PaymentController {
     @Autowired
     private PlanService planService;
 
-    // ===============================
-    // OPEN PAYMENT PAGE
-    // ===============================
-    @GetMapping("/pay/{planId}")
-    public String openPaymentPage(
-            @PathVariable int planId,
-            HttpSession session,
-            Model model) {
-
-        Member member = (Member) session.getAttribute("member");
-        if (member == null) {
-            return "redirect:/login";
-        }
-
-        Plan plan = planService.getById(planId);
-
-        model.addAttribute("plan", plan);
-        return "payment"; // payment.jsp / payment.html
-    }
 
     // ===============================
     // PAYMENT SUCCESS (Razorpay callback)
@@ -72,9 +53,8 @@ public class PaymentController {
         payment.setPaymentDate(new Date());
         payment.setMode("ONLINE");
         payment.setStatus("SUCCESS");
+        payment.setRazorpayPaymentId(razorpayPaymentId);
 
-        // Razorpay payment id store
-        payment.setMode("RAZORPAY : " + razorpayPaymentId);
 
         paymentService.savePayment(payment);
 

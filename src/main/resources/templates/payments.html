@@ -22,9 +22,15 @@
 </div>
 
 <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const razorpayKeyId = [[${razorpayKeyId}]];
+    const planPrice = [[${plan.price}]];
+    const planId = [[${plan.id}]];
+
     var options = {
-        key: "[[${razorpayKeyId}]]",
-        amount: [[${plan.price}]] * 100,
+        key: razorpayKeyId,
+        amount: planPrice * 100,
         currency: "INR",
         name: "XYZ Gym",
         description: "[[${plan.planName}]] Plan",
@@ -37,7 +43,7 @@
                 },
                 body:
                     "razorpayPaymentId=" + response.razorpay_payment_id +
-                    "&planId=[[${plan.id}]]"
+                    "&planId=" + planId
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
@@ -52,7 +58,10 @@
         rzp1.open();
         e.preventDefault();
     };
+
+    /*]]>*/
 </script>
+
 
 
 </body>

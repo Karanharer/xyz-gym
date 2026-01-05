@@ -24,7 +24,7 @@
 <script th:inline="javascript">
     var options = {
         "key": "[[${razorpayKeyId}]]",
-        "amount": [[${plan.price}]] * 100,
+        "amount": Math.round([[${plan.price}]]) * 100,
         "currency": "INR",
         "name": "XYZ Gym",
         "description": "[[${plan.planName}]] Plan",

@@ -7,6 +7,8 @@ import com.gymmanagement.service.PaymentService;
 import com.gymmanagement.service.PlanService;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +36,10 @@ public class MemberController {
 
     @Autowired
     private PlanService planService;
+
+    @Value("${razorpay.key.id}")
+    private String razorpayKeyId;
+
 
     // ================= REGISTER =================
     @PostMapping("/register")
@@ -140,33 +146,42 @@ public class MemberController {
 
 
 
-    // ================= PLAN SELECTION =================
     @PostMapping("/selectPlan")
-    public String selectPlans(HttpSession session,
-                            @RequestParam int planId,
-                            Model model) {
+    public String selectPlan(HttpSession session,
+                            @RequestParam int planId) {
 
         Member member = (Member) session.getAttribute("member");
-        if(member == null) {
+        if (member == null) {
             return "redirect:/login";
         }
 
         Plan plan = planService.getById(planId);
-        if(plan == null) {
-            model.addAttribute("error", "Invalid plan selected");
-            return "member-dashboard";
+        if (plan == null) {
+            return "redirect:/member/dashboard?error=invalid_plan";
         }
 
-        // Save selected plan temporarily in session for payment
+        // store in session
         session.setAttribute("selectedPlan", plan);
 
-        // Redirect to payment page
-        model.addAttribute("plan", plan);
-        model.addAttribute("member", member);
-
-        return "payments";  // payment.jsp
+        return "redirect:/member/payment";
     }
 
+    @GetMapping("/payment")
+    public String paymentPage(HttpSession session, Model model) {
+
+        Member member = (Member) session.getAttribute("member");
+        Plan plan = (Plan) session.getAttribute("selectedPlan");
+
+        if (member == null || plan == null) {
+            return "redirect:/member/dashboard";
+        }
+
+        model.addAttribute("member", member);
+        model.addAttribute("plan", plan);
+        model.addAttribute("razorpayKeyId", razorpayKeyId);
+
+        return "payments";
+    }
 
 
 

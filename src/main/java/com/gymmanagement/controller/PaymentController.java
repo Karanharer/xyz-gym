@@ -30,7 +30,6 @@ public class PaymentController {
 
     // ===============================
     // PAYMENT SUCCESS (Razorpay callback)
-    // ===============================
     @PostMapping("/paymentSuccess")
     @ResponseBody
     public String paymentSuccess(
@@ -45,7 +44,6 @@ public class PaymentController {
 
         Plan plan = planService.getById(planId);
 
-        // -------- SAVE PAYMENT --------
         Payment payment = new Payment();
         payment.setMember(member);
         payment.setPlan(plan);
@@ -55,11 +53,14 @@ public class PaymentController {
         payment.setStatus("SUCCESS");
         payment.setRazorpayPaymentId(razorpayPaymentId);
 
-
         paymentService.savePayment(payment);
 
-        // -------- ASSIGN PLAN TO MEMBER --------
+        // Assign plan
         memberService.assignPlanToMember(member.getId(), plan.getId());
+
+        // 🔥 Refresh & update session
+        Member updatedMember = memberService.getById(member.getId());
+        session.setAttribute("member", updatedMember);
 
         return "OK";
     }

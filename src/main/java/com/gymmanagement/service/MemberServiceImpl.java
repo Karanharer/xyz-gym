@@ -6,12 +6,14 @@ import com.gymmanagement.repository.MemberRepository;
 import com.gymmanagement.repository.PlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional   // 🔥 THIS IS THE KEY
 public class MemberServiceImpl implements MemberService {
 
     @Autowired
@@ -54,6 +56,7 @@ public class MemberServiceImpl implements MemberService {
     public long getTotalMembers() {
         return memberRepository.count();
     }
+
     @Override
     public void assignPlanToMember(int memberId, int planId) {
 
@@ -73,6 +76,4 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
     }
-
-
 }

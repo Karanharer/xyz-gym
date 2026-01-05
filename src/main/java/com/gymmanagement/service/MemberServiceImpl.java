@@ -63,10 +63,8 @@ public class MemberServiceImpl implements MemberService {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
 
-        // plan set
         member.setPlan(plan);
 
-        // expiry date calculate
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.MONTH, plan.getDurationMonths());
@@ -75,5 +73,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
     }
+
 
 }

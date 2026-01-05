@@ -23,26 +23,31 @@
 
 <script th:inline="javascript">
     var options = {
-        "key": "rzp_test_RyWxUjYDSPBuhj",
+        "key": "[[${razorpayKeyId}]]",
         "amount": [[${plan.price}]] * 100,
         "currency": "INR",
         "name": "XYZ Gym",
         "description": "[[${plan.planName}]] Plan",
+
         "handler": function (response){
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/member/paymentSuccess", true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
-                if(xhr.readyState === 4 && xhr.status === 200){
-                    window.location.href = "/member/dashboard";
-                }
-            };
-            xhr.send("razorpayPaymentId=" + response.razorpay_payment_id);
+            fetch("/member/paymentSuccess", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "razorpayPaymentId=" + response.razorpay_payment_id
+            }).then(() => {
+                window.location.href = "/member/dashboard";
+            });
         },
-        "theme": { "color": "#ff6f00" }
+
+        "theme": {
+            "color": "#ff6f00"
+        }
     };
 
     var rzp1 = new Razorpay(options);
+
     document.getElementById("rzp-button").onclick = function(e){
         rzp1.open();
         e.preventDefault();

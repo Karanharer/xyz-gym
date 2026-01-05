@@ -1,10 +1,14 @@
 package com.gymmanagement.service;
 
 import com.gymmanagement.model.Member;
+import com.gymmanagement.model.Plan;
 import com.gymmanagement.repository.MemberRepository;
+import com.gymmanagement.repository.PlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,6 +50,27 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public long getTotalMembers() {
         return memberRepository.count();
+    }
+    @Override
+    public void assignPlanToMember(int memberId, int planId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new RuntimeException("Plan not found"));
+
+        // plan set
+        member.setPlan(plan);
+
+        // expiry date calculate
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.MONTH, plan.getDurationMonths());
+
+        member.setExpiryDate(cal.getTime());
+
+        memberRepository.save(member);
     }
 
 }

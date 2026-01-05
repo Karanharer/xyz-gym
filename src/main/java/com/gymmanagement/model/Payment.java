@@ -4,23 +4,42 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "payments")
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    // ===============================
+    // MEMBER
+    // ===============================
     @ManyToOne
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    // ===============================
+    // PLAN
+    // ===============================
+    @ManyToOne
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
+
+    // ===============================
+    // PAYMENT DETAILS
+    // ===============================
     private double amount;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date paymentDate;
 
-    private String mode;
+    private String mode;   // ONLINE / CASH / CARD
 
-    // Getters and Setters
+    private String status; // SUCCESS / FAILED / PENDING
+
+    // ===============================
+    // GETTERS & SETTERS
+    // ===============================
     public int getId() {
         return id;
     }
@@ -35,6 +54,14 @@ public class Payment {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 
     public double getAmount() {
@@ -61,16 +88,11 @@ public class Payment {
         this.mode = mode;
     }
 
-   @ManyToOne
-    @JoinColumn(name="plan_id")  
-    private Plan plan;
-
-    public Plan getPlan() {
-        return plan;
+    public String getStatus() {
+        return status;
     }
 
-    public void setPlan(Plan plan) {
-        this.plan = plan;
+    public void setStatus(String status) {
+        this.status = status;
     }
-
 }

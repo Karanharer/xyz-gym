@@ -1,6 +1,7 @@
 package com.gymmanagement.service;
 
 import com.gymmanagement.model.Member;
+import com.gymmanagement.model.Plan;
 import java.util.List;
 
 public interface MemberService {
@@ -18,4 +19,6 @@ public interface MemberService {
     void deleteMember(int id);
 
     long getTotalMembers();
+
+    void assignPlanToMember(int memberId, int planId);
 }

@@ -168,41 +168,7 @@ public class MemberController {
     }
 
 
-    @PostMapping("/paymentSuccess")
-    @ResponseBody
-    public String paymentSuccesss(HttpSession session,
-                                @RequestParam String razorpayPaymentId) {
 
-        Member member = (Member) session.getAttribute("member");
-        Plan plan = (Plan) session.getAttribute("selectedPlan");
-
-        if(member == null || plan == null){
-            return "ERROR";
-        }
-
-        // 1️⃣ Create payment record
-        Payment payment = new Payment();
-        payment.setMember(member);
-        payment.setAmount(plan.getPrice());
-        payment.setPaymentDate(new Date());
-        payment.setMode("Razorpay - Test");
-        paymentService.savePayment(payment);
-
-        // 2️⃣ Assign plan to member
-        member.setPlan(plan);
-        member.setJoinDate(new Date());
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.MONTH, plan.getDurationMonths());
-        member.setExpiryDate(cal.getTime());
-
-        memberService.saveMember(member);
-
-        // 3️⃣ Clear session temp
-        session.removeAttribute("selectedPlan");
-
-        return "OK";
-    }
 
     // ================= LOGOUT =================
     @GetMapping("/logout")

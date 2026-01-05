@@ -17,6 +17,9 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private PlanRepository planRepository;
+
     @Override
     public void saveMember(Member member) {
         memberRepository.save(member);

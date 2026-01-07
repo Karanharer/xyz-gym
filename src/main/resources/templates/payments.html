@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -22,36 +24,40 @@
 </div>
 
 <script th:inline="javascript">
-    var options = {
-        "key": "[[${razorpayKeyId}]]",
-        "amount": planPrice * 100,
-        "currency": "INR",
-        "name": "XYZ Gym",
-        "description": "[[${plan.planName}]] Plan",
+    /*<![CDATA[*/
 
-        "handler": function (response){
+    var options = {
+        key: /*[[${razorpayKeyId}]]*/ "",
+        amount: /*[[${plan.price}]]*/ 0 * 100,
+        currency: "INR",
+        name: "XYZ Gym",
+        description: /*[['' + ${plan.planName} + ' Plan']]*/ "",
+
+        handler: function (response) {
             fetch("/member/paymentSuccess", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: "razorpayPaymentId=" + response.razorpay_payment_id
+                body:
+                    "razorpayPaymentId=" + response.razorpay_payment_id +
+                    "&planId=" + /*[[${plan.id}]]*/ 0
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
         },
 
-        "theme": {
-            "color": "#ff6f00"
-        }
+        theme: { color: "#ff6f00" }
     };
 
     var rzp1 = new Razorpay(options);
 
-    document.getElementById("rzp-button").onclick = function(e){
+    document.getElementById("rzp-button").onclick = function (e) {
         rzp1.open();
         e.preventDefault();
-    }
+    };
+
+    /*]]>*/
 </script>
 
 </body>

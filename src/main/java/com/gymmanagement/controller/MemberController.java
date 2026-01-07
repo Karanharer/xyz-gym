@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gymmanagement.model.Plan;
 import com.gymmanagement.model.Payment;
@@ -183,6 +184,32 @@ public class MemberController {
         return "payments";
     }
 
+
+    @PostMapping("/updateProfile")
+    public String updateProfile(HttpSession session,
+                                @RequestParam String name,
+                                @RequestParam String email,
+                                @RequestParam String phone,
+                                RedirectAttributes redirectAttributes) {
+
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/login";
+        }
+
+        member.setName(name);
+        member.setEmail(email);
+        member.setPhone(phone);
+
+        memberService.saveMember(member);
+
+        session.setAttribute("member", member);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Profile updated successfully!");
+
+        return "redirect:/member/dashboard";
+    }
 
 
     // ================= LOGOUT =================

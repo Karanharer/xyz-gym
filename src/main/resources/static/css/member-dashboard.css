@@ -1,26 +1,33 @@
-/* ======================
-   FONT
-====================== */
+/* ==============================
+   GOOGLE FONT
+================================ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ==============================
+   ROOT VARIABLES
+================================ */
 :root {
     --accent: #ff6f00;
+    --accent-light: #ff8f00;
 
     --bg-main: #0f1115;
     --bg-header: #14161b;
     --bg-sidebar: #16181d;
-
-    /* 🔥 TEXT COLORS (FIXED) */
-    --text-main: #ffffff;        /* PURE WHITE */
-    --text-secondary: #e5e7eb;   /* LIGHT GREY */
-    --text-muted: #cbd5e1;
+    --bg-card: #1c1f26;
 
     --border-soft: rgba(255,255,255,0.08);
+
+    /* 🔥 FIXED TEXT COLORS */
+    --text-main: #f9fafb;      /* PURE WHITE */
+    --text-muted: #d1d5db;     /* readable grey */
+
+    --success: #22c55e;
+    --danger: #ef4444;
 }
 
-/* ======================
-   BASE
-====================== */
+/* ==============================
+   RESET
+================================ */
 * {
     margin: 0;
     padding: 0;
@@ -32,50 +39,52 @@ body {
     background: radial-gradient(circle at top, #141820, #0f1115);
     color: var(--text-main);
     min-height: 100vh;
-
-    /* 🔥 Text clarity */
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
-/* ================= HEADER ================= */
+/* ==============================
+   HEADER
+================================ */
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 64px;
-    background: rgba(20,22,27,0.95);
+    background: rgba(20,22,27,0.96);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
+    padding: 0 24px;
+    z-index: 1200;
     border-bottom: 1px solid var(--border-soft);
 }
 
-.brand {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 1.3rem;
-}
-
 .toggle-btn {
-    font-size: 1.7rem;
-    color: var(--accent);
+    font-size: 1.6rem;
     cursor: pointer;
+    color: var(--accent);
 }
 
-/* ================= SIDEBAR ================= */
+.brand {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* ==============================
+   SIDEBAR
+================================ */
 .sidebar {
     position: fixed;
-    left: -260px;
     top: 0;
-    width: 260px;
+    left: -280px;
+    width: 280px;
     height: 100%;
     background: linear-gradient(180deg, #16181d, #12141a);
-    padding-top: 80px;
+    padding-top: 90px;
     transition: 0.35s ease;
-    z-index: 999;
+    z-index: 1100;
 }
 
 .sidebar.active {
@@ -83,129 +92,136 @@ body {
 }
 
 .sidebar a {
-    display: block;
-    padding: 14px 24px;
-    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 26px;
+    font-size: 0.95rem;
+    color: #e5e7eb; /* 🔥 FIX */
     text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s;
+    border-radius: 10px;
+    margin: 4px 12px;
 }
 
-.sidebar a:hover,
+.sidebar a:hover {
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+}
+
 .sidebar a.active {
-    background: rgba(255,111,0,0.18);
-    color: #fff;
+    background: linear-gradient(90deg, rgba(255,111,0,0.25), transparent);
+    color: #ffffff;
 }
 
-/* LOGOUT */
-.btn-logout {
-    margin: 40px auto;
-    display: block;
-    width: 80%;
-    text-align: center;
-    background: linear-gradient(135deg, #ff7a00, #ff3d00);
-    padding: 12px;
-    border-radius: 30px;
-    color: #fff;
-    font-weight: 600;
-}
-
-/* ================= CONTENT ================= */
+/* ==============================
+   CONTENT
+================================ */
 .content {
     margin-top: 64px;
-    padding: 24px;
+    padding: 28px;
+    transition: margin-left 0.35s ease;
 }
 
-/* ================= CARDS ================= */
-.card {
-    background: linear-gradient(180deg, #2a2f3b, #1c1f26); /* 🔥 brighter */
+.content.shifted {
+    margin-left: 280px;
+}
+
+/* ==============================
+   CARDS (🔥 MAIN FIX HERE)
+================================ */
+.card,
+.plan-card,
+.list-group-item {
+    background: linear-gradient(180deg, #23262f, #1c1f26);
     border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.12);
     padding: 26px;
-    text-align: center;
-    box-shadow: 0 14px 30px rgba(0,0,0,0.65);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.6);
 }
 
-/* 🔥 FIXED CARD TEXT */
-.card h5 {
-    color: var(--text-secondary);
-    font-weight: 500;
-    letter-spacing: 0.4px;
-}
-
-.card h3 {
+/* 🔥 HEADINGS PURE WHITE */
+.card h3,
+.card h5,
+.plan-card h4,
+.profile-section h4 {
     color: #ffffff;
-    font-size: 1.9rem;
     font-weight: 700;
-    margin-top: 6px;
+    letter-spacing: 0.3px;
 }
 
-/* ================= MODAL ================= */
-.plan-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(6px);
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.plan-modal.active {
-    display: flex;
-}
-
-.plan-modal-content {
-    background: linear-gradient(145deg, #23262f, #1c1f26);
-    padding: 30px;
-    border-radius: 24px;
-    width: 95%;
-    max-width: 520px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-}
-
-.plan-modal-content h4 {
-    text-align: center;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-/* ================= INPUT ================= */
-input {
-    width: 100%;
-    background: #111;
-    border: 1px solid #333;
-    color: #ffffff;
-    padding: 11px 14px;
-    border-radius: 12px;
+/* 🔥 BODY TEXT FIX */
+.card p,
+.card span,
+.profile-section p,
+.profile-section label,
+.payment-table td,
+.list-group-item {
+    color: #f3f4f6;
     font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Stats */
+.card .stat {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* ==============================
+   INPUTS
+================================ */
+input,
+textarea {
+    background: #1c1f26;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 14px;
+    border-radius: 14px;
 }
 
 input::placeholder {
     color: #9ca3af;
 }
 
-/* ================= PAYMENT ================= */
-.payment-table {
-    color: var(--text-secondary);
+/* ==============================
+   BUTTONS
+================================ */
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), #ff3d00);
+    border: none;
+    border-radius: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    padding: 10px 24px;
 }
 
-.status.paid {
-    background: rgba(34,197,94,0.22);
-    color: #22c55e;
-    padding: 6px 14px;
-    border-radius: 20px;
+/* ==============================
+   TABLE
+================================ */
+.payment-table th {
+    color: #e5e7eb;
     font-weight: 600;
 }
 
-/* ================= MOBILE ================= */
-@media(max-width:768px){
+.status.paid {
+    background: rgba(34,197,94,0.2);
+    color: #22c55e;
+}
+
+/* ==============================
+   MOBILE IMPROVEMENTS
+================================ */
+@media (max-width: 576px) {
     .content {
         padding: 16px;
     }
 
     .card h3 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
     }
 }

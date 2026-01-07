@@ -116,34 +116,7 @@ public class MemberController {
         return "member-dashboard";
     }
 
-    // ================= UPDATE PROFILE =================
-    @PostMapping("/updateProfile")
-    public String updateProfilse(HttpSession session,
-                                @RequestParam String name,
-                                @RequestParam String email,
-                                @RequestParam String phone,
-                                Model model) {
-
-        Member member = (Member) session.getAttribute("member");
-        if (member == null) {
-            return "redirect:/login";
-        }
-
-        member.setName(name);
-        member.setEmail(email);
-        member.setPhone(phone);
-
-        memberService.saveMember(member);
-
-        // ✅ same key again
-        session.setAttribute("member", member);
-
-        model.addAttribute("success", "Profile updated successfully!");
-        model.addAttribute("member", member);
-
-        return "member-dashboard";
-
-    }
+    
 
 
 

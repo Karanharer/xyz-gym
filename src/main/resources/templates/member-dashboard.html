@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,153 +7,176 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
+    <!-- Icons -->
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/member-dashboard.css}">
-    
 </head>
 
 <body>
 
 <!-- MOBILE MENU BUTTON -->
-<button class="btn btn-dark d-md-none m-2" id="menuToggle">
+<button id="menuToggle" class="menu-toggle d-md-none">
     <i class="fas fa-bars"></i>
 </button>
 
-<!-- ================= SIDEBAR ================= -->
+<!-- SIDEBAR -->
 <aside id="sidebar" class="sidebar">
-    <div class="sidebar-logo-container">
-        <img th:src="@{/images/logo.png}" class="sidebar-logo">
+
+    <div class="sidebar-header">
+        <img th:src="@{/images/logo.png}" alt="XYZ Gym">
     </div>
 
-    <a href="#dashboard" class="nav-link active">
-        <i class="fas fa-tachometer-alt"></i> Dashboard
-    </a>
+    <nav class="sidebar-menu">
+        <a class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
 
-    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#profileModal">
-        <i class="fas fa-user"></i> Update Profile
-    </a>
+        <a data-bs-toggle="modal" data-bs-target="#profileModal">
+            <i class="fas fa-user-edit"></i> Update Profile
+        </a>
 
-    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#paymentModal">
-        <i class="fas fa-credit-card"></i> Payment History
-    </a>
+        <a data-bs-toggle="modal" data-bs-target="#paymentModal">
+            <i class="fas fa-wallet"></i> Payment History
+        </a>
+    </nav>
 
-    <a th:href="@{/member/logout}" class="btn btn-logout">
+    <a th:href="@{/member/logout}" class="sidebar-logout">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
+
 </aside>
 
 <div id="overlay"></div>
 
-<!-- ================= HEADER ================= -->
-<header class="header">
-    <span class="brand">Welcome, <span th:text="${member.name}"></span></span>
+<!-- TOP HEADER -->
+<header class="top-header">
+    <h4>Welcome, <span th:text="${member.name}"></span></h4>
 </header>
 
-<!-- ================= CONTENT ================= -->
-<main id="content" class="content">
+<!-- MAIN CONTENT -->
+<main class="dashboard-content">
 
-    <!-- DASHBOARD CARDS (UNCHANGED) -->
-    <section id="dashboard" class="mb-4">
-        <div class="row g-3">
+    <!-- DASHBOARD STATS -->
+    <section class="stats-section">
+        <div class="row g-4">
 
-            <div class="col-md-3 col-sm-6">
-                <div class="card dashboard-card text-center">
-                    <h5>Active Plan</h5>
-
-                    <h3 th:if="${member.plan != null}"
-                        th:text="${member.plan.planName}"></h3>
-
-                    <h3 th:if="${member.plan == null}">None</h3>
-
-                    <button th:if="${member.plan == null}"
-                            class="btn btn-primary btn-sm mt-2"
-                            onclick="openPlanModal()">
-                        Select Plan
-                    </button>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <span>Active Plan</span>
+                    <h3 th:text="${member.plan != null ? member.plan.planName : 'None'}"></h3>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6">
-                <div class="card dashboard-card text-center">
-                    <h5>Total Payments</h5>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <span>Total Paid</span>
                     <h3>₹ <span th:text="${paymentsTotal}"></span></h3>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6">
-                <div class="card dashboard-card text-center">
-                    <h5>Attendance</h5>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <span>Attendance</span>
                     <h3><span th:text="${attendancePercent}"></span>%</h3>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6">
-                <div class="card dashboard-card text-center">
-                    <h5>Plan Expiry</h5>
-
-                    <div th:if="${member.plan != null}">
-                        <div class="progress mt-2">
-                            <div class="progress-bar"
-                                 th:style="'width:' + ${planProgress} + '%'">
-                                <span th:text="${planProgress}"></span>%
-                            </div>
-                        </div>
-                        <small>
-                            Expires on <span th:text="${member.expiryDate}"></span>
-                        </small>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <span>Plan Progress</span>
+                    <div class="progress mt-2">
+                        <div class="progress-bar"
+                             th:style="'width:' + ${planProgress} + '%'"></div>
                     </div>
-
-                    <span th:if="${member.plan == null}" class="text-danger">
-                        No Plan
-                    </span>
                 </div>
             </div>
 
         </div>
     </section>
 
+    <!-- PROFILE SECTION -->
+    <section class="content-card">
+        <h5>Profile</h5>
+        <hr>
+        <p><b>Name:</b> <span th:text="${member.name}"></span></p>
+        <p><b>Email:</b> <span th:text="${member.email}"></span></p>
+        <p><b>Phone:</b> <span th:text="${member.phone}"></span></p>
+    </section>
+
+    <!-- PLAN SECTION -->
+    <section class="content-card">
+        <h5>My Plan</h5>
+        <hr>
+
+        <div th:if="${member.plan != null}">
+            <p><b>Plan:</b> <span th:text="${member.plan.planName}"></span></p>
+            <p><b>Duration:</b> <span th:text="${member.plan.durationMonths}"></span> Months</p>
+            <p><b>Expiry:</b> <span th:text="${member.expiryDate}"></span></p>
+        </div>
+
+        <div th:if="${member.plan == null}" class="text-danger">
+            No active plan selected.
+        </div>
+    </section>
+
+    <!-- PAYMENTS SECTION -->
+    <section class="content-card">
+        <h5>Payments</h5>
+        <hr>
+        <p><b>Total Paid:</b> ₹ <span th:text="${paymentsTotal}"></span></p>
+
+        <button class="btn btn-warning btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#paymentModal">
+            View Payment History
+        </button>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="content-card">
+        <h5>Notifications</h5>
+        <hr>
+        <ul class="notification-list">
+            <li>🏋️ New batch starts from Monday</li>
+            <li>🎉 Renewal discount available</li>
+            <li>📅 Gym closed on public holidays</li>
+        </ul>
+    </section>
+
 </main>
 
-<!-- ================= PROFILE UPDATE MODAL ================= -->
-<div class="modal fade" id="profileModal" tabindex="-1">
+<!-- ================= PROFILE MODAL ================= -->
+<div class="modal fade" id="profileModal">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-light">
+        <div class="modal-content dark-modal">
 
             <form th:action="@{/member/updateProfile}" method="post">
 
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Update Profile</h5>
-                    <button type="button" class="btn-close btn-close-white"
+                <div class="modal-header">
+                    <h5>Update Profile</h5>
+                    <button class="btn-close btn-close-white"
                             data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <label>Name</label>
                     <input class="form-control mb-3"
                            name="name"
-                           th:value="${member.name}" required>
-
-                    <label>Email</label>
+                           th:value="${member.name}">
                     <input class="form-control mb-3"
                            name="email"
-                           th:value="${member.email}" required>
-
-                    <label>Phone</label>
+                           th:value="${member.email}">
                     <input class="form-control"
                            name="phone"
-                           th:value="${member.phone}" required>
+                           th:value="${member.phone}">
                 </div>
 
-                <div class="modal-footer border-secondary">
-                    <button class="btn btn-success px-4">Save</button>
+                <div class="modal-footer">
+                    <button class="btn btn-warning w-100">Save</button>
                 </div>
 
             </form>
@@ -163,19 +185,19 @@
     </div>
 </div>
 
-
 <!-- ================= PAYMENT HISTORY MODAL ================= -->
 <div class="modal fade" id="paymentModal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-dark text-light">
+        <div class="modal-content dark-modal">
 
             <div class="modal-header">
                 <h5>Payment History</h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-                <table class="table table-dark table-striped">
+                <table class="table table-dark table-hover align-middle">
                     <thead>
                     <tr>
                         <th>Plan</th>
@@ -184,13 +206,15 @@
                         <th>Date</th>
                     </tr>
                     </thead>
-
                     <tbody>
                     <tr th:each="p : ${paymentList}">
                         <td th:text="${p.plan.planName}"></td>
                         <td>₹ <span th:text="${p.amount}"></span></td>
-                        <td th:text="${p.status}"></td>
-                        <td th:text="${#dates.format(p.paymentDate,'dd-MM-yyyy')}"></td>
+                        <td>
+                            <span class="badge bg-success"
+                                  th:text="${p.status}"></span>
+                        </td>
+                        <td th:text="${#dates.format(p.paymentDate,'dd MMM yyyy')}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -200,75 +224,7 @@
     </div>
 </div>
 
- <!-- ===== NOTIFICATIONS ===== -->
-    <section id="notifications" class="card section-card mb-4 p-4">
-        <h4 class="mb-3">Notifications</h4>
-        <hr>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">🏋️ New batch starts from Monday</li>
-            <li class="list-group-item">🎉 Renewal discount available</li>
-            <li class="list-group-item">📅 Gym closed on public holidays</li>
-        </ul>
-    </section>
-
-</main>
-
-<!-- ================= PLAN MODAL ================= -->
-<div id="planModal" class="plan-modal">
-    <div class="plan-modal-content">
-        <h4>Select a Plan</h4>
-        <hr>
-
-        <form th:action="@{/member/selectPlan}" method="post">
-
-            <div class="plan-card" th:each="plan : ${plansList}">
-                <div>
-                    <h6 th:text="${plan.planName}"></h6>
-                    <small th:text="${plan.durationMonths + ' Months'}"></small><br>
-                    <strong>₹ <span th:text="${plan.price}"></span></strong>
-                </div>
-
-                <input type="radio" name="planId"
-                       th:value="${plan.id}" required>
-            </div>
-
-            <button class="btn btn-primary w-100 mt-3">
-                Proceed to Payment
-            </button>
-        </form>
-
-        <button class="btn btn-secondary w-100 mt-2"
-                onclick="closePlanModal()">
-            Cancel
-        </button>
-    </div>
-</div>
-
-<!-- ================= JS ================= -->
-<script>
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("active");
-        document.getElementById("content").classList.toggle("shifted");
-    }
-
-    function openPlanModal() {
-        document.getElementById("planModal").classList.add("active");
-    }
-
-    function closePlanModal() {
-        document.getElementById("planModal").classList.remove("active");
-    }
-
-    /* Auto open modal if no plan */
-    window.onload = function () {
-        const hasPlan = [[${member.plan != null}]];
-        if (!hasPlan) {
-            openPlanModal();
-        }
-    }
-</script>
-
-<!-- ================= JS ================= -->
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>

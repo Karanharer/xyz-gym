@@ -23,18 +23,19 @@
     </button>
 </div>
 
-<script th:inline="javascript">
-/*<![CDATA[*/
+<script>
+    const razorpayKey = "[[${razorpayKeyId}]]";
+    const amountInPaise = [[${plan.price}]] * 100;
 
-    var priceInRupees = /*[[${plan.price}]]*/ 0;
-    var amountInPaise = Math.round(priceInRupees * 100);
+    console.log("KEY =", razorpayKey);
+    console.log("AMOUNT =", amountInPaise);
 
     var options = {
-        key: '/*[[${razorpayKeyId}]]*/',
+        key: razorpayKey,
         amount: amountInPaise,
         currency: "INR",
         name: "XYZ Gym",
-        description: "Gym Plan",
+        description: "[[${plan.planName}]] Plan",
 
         handler: function (response) {
             fetch("/member/paymentSuccess", {
@@ -44,7 +45,7 @@
                 },
                 body:
                     "razorpayPaymentId=" + response.razorpay_payment_id +
-                    "&planId=" + /*[[${plan.id}]]*/ 0
+                    "&planId=[[${plan.id}]]"
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
@@ -53,17 +54,13 @@
         theme: { color: "#ff6f00" }
     };
 
-    var rzp1 = new Razorpay(options);
+    var rzp = new Razorpay(options);
 
     document.getElementById("rzp-button").onclick = function (e) {
-        rzp1.open();
+        rzp.open();
         e.preventDefault();
     };
-
-/*]]>*/
 </script>
-
-
 
 </body>
 </html>

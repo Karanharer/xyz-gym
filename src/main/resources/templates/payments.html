@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -18,7 +16,7 @@
     <p>Duration: <span th:text="${plan.durationMonths}"></span> months</p>
     <p>Amount: ₹ <span th:text="${plan.price}"></span></p>
 
-    <button id="rzp-button" class="btn btn-primary mt-3 w-100">
+    <button id="rzp-button" class="btn btn-warning mt-3 w-100">
         Pay Now
     </button>
 </div>
@@ -26,15 +24,15 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 
-    var priceInRupees = /*[[${plan.price}]]*/ 0;
-    var amountInPaise = Math.round(priceInRupees * 100);
+    const priceInRupees = /*[[${plan.price}]]*/ 0;
+    const amountInPaise = priceInRupees * 100;
 
-    var options = {
-        key: /*[[${razorpayKeyId}]]*/ "",
-        amount: amountInPaise,   // ✅ CORRECT
+    const options = {
+        key: "[[${razorpayKeyId}]]",   // ✅ MUST be string
+        amount: amountInPaise,
         currency: "INR",
         name: "XYZ Gym",
-        description: /*[['' + ${plan.planName} + ' Plan']]*/ "",
+        description: "[[${plan.planName}]] Plan",
 
         handler: function (response) {
             fetch("/member/paymentSuccess", {
@@ -51,19 +49,20 @@
             });
         },
 
-        theme: { color: "#ff6f00" }
+        theme: {
+            color: "#ff6f00"
+        }
     };
 
-    var rzp1 = new Razorpay(options);
+    const rzp1 = new Razorpay(options);
 
-    document.getElementById("rzp-button").onclick = function (e) {
+    document.getElementById("rzp-button").addEventListener("click", function (e) {
         rzp1.open();
         e.preventDefault();
-    };
+    });
 
 /*]]>*/
 </script>
-
 
 </body>
 </html>

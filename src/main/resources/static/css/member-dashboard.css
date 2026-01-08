@@ -287,3 +287,17 @@ body {
         margin-left: 280px;
     }
 }
+
+.plan-card {
+    background: #1e1e1e;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+

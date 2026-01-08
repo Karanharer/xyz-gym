@@ -24,11 +24,14 @@
 </div>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
+/*<![CDATA[*/
+
+    var priceInRupees = /*[[${plan.price}]]*/ 0;
+    var amountInPaise = Math.round(priceInRupees * 100);
 
     var options = {
         key: /*[[${razorpayKeyId}]]*/ "",
-        amount: /*[[${plan.price}]]*/ plan.price * 100,
+        amount: amountInPaise,   // ✅ CORRECT
         currency: "INR",
         name: "XYZ Gym",
         description: /*[['' + ${plan.planName} + ' Plan']]*/ "",
@@ -41,7 +44,8 @@
                 },
                 body:
                     "razorpayPaymentId=" + response.razorpay_payment_id +
-                    "&planId=" + /*[[${plan.id}]]*/ 0
+                    "&planId=" + /*[[${plan.id}]]*/ 0 +
+                    "&amount=" + priceInRupees
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
@@ -57,8 +61,9 @@
         e.preventDefault();
     };
 
-    /*]]>*/
+/*]]>*/
 </script>
+
 
 </body>
 </html>

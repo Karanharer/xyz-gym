@@ -179,9 +179,11 @@
                 <td th:text="${p.plan.planName}"></td>
                 <td>₹ <span th:text="${p.amount}"></span></td>
                 <td th:text="${#dates.format(p.paymentDate,'dd-MM-yyyy')}"></td>
-                <td ><button class="btn btn-sm btn-success" th:onclick="'openPaymentModal(' + ${m.id} + ')'">
+                <td>
+                    <button class="btn btn-sm btn-success"
+                            th:onclick="'openPaymentModal(' + ${p.member.id} + ')'">
                         Add Payment
-                    </button> 
+                    </button>
                 </td>
             </tr>
             </tbody>

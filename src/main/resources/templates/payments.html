@@ -27,14 +27,14 @@
 /*<![CDATA[*/
 
     var priceInRupees = /*[[${plan.price}]]*/ 0;
-    var amountInPaise = Math.round(priceInRupees * 100); // ✅ FIX
+    var amountInPaise = Math.round(priceInRupees * 100);
 
     var options = {
-        key: /*[[${razorpayKeyId}]]*/ "",
-        amount: amountInPaise,   // ✅ 29900
+        key: '/*[[${razorpayKeyId}]]*/',
+        amount: amountInPaise,
         currency: "INR",
         name: "XYZ Gym",
-        description: /*[['' + ${plan.planName} + ' Plan']]*/ "",
+        description: "Gym Plan",
 
         handler: function (response) {
             fetch("/member/paymentSuccess", {
@@ -44,8 +44,7 @@
                 },
                 body:
                     "razorpayPaymentId=" + response.razorpay_payment_id +
-                    "&planId=" + /*[[${plan.id}]]*/ 0 +
-                    "&amount=" + priceInRupees
+                    "&planId=" + /*[[${plan.id}]]*/ 0
             }).then(() => {
                 window.location.href = "/member/dashboard";
             });
@@ -63,6 +62,7 @@
 
 /*]]>*/
 </script>
+
 
 
 </body>

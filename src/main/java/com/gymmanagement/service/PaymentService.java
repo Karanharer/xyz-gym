@@ -20,4 +20,7 @@ public interface PaymentService {
 
     // प्रत्येक plan चा revenue return करेल: Map<PlanName, TotalRevenue>
     Map<String, Double> planWiseRevenue();
+
+    void savePayment(Member m, Plan p, double amount);
+
 }

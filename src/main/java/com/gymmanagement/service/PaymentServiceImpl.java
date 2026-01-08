@@ -55,6 +55,28 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
     }
 
+    @Override
+    public void savePayment(Member m, Plan p, double amount) {
+
+        // 1️⃣ Member update
+        m.setPlan(p);
+        m.setExpiryDate(
+            java.sql.Date.valueOf(
+                LocalDate.now().plusMonths(p.getDurationMonths())
+            )
+        );
+        memberRepository.save(m);
+
+        // 2️⃣ Payment save with CUSTOM amount
+        Payment payment = new Payment();
+        payment.setMember(m);
+        payment.setPlan(p);
+        payment.setAmount(amount); // 👈 IMPORTANT
+        payment.setPaymentDate(java.sql.Date.valueOf(LocalDate.now()));
+
+        paymentRepository.save(payment);
+    }
+
 
     @Override
     public Map<String, Double> planWiseRevenue() {

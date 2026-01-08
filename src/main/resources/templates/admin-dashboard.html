@@ -87,6 +87,10 @@
 
     <!-- ================= MEMBERS ================= -->
     <section id="members" class="card-section">
+        <button class="btn btn-sm btn-primary" onclick="openAddMemberModal()">
+            + Add Member
+        </button>
+
         <div class="card-header">
             <h5>Members</h5>
             <input type="text" id="memberSearch" placeholder="Search member">
@@ -120,6 +124,37 @@
         </table>
     </section>
 
+    <section id="plans" class= "card-section" >
+        <div class="card-header">
+            <h4>Plans</h4>
+
+            <table class="table table-dark table-hover mt-3">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Price</th>
+                    <th width="120">Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="p : ${plans}">
+                    <td th:text="${p.planName}"></td>
+                    <td th:text="${p.durationMonths + ' Months'}"></td>
+                    <td th:text="'₹ ' + ${p.price}"></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger"
+                                th:onclick="'deletePlan(' + ${p.id} + ')'">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <!-- ================= PAYMENTS ================= -->
     <section id="payments" class="card-section">
         <div class="card-header">
@@ -134,6 +169,7 @@
                 <th>Plan</th>
                 <th>Amount</th>
                 <th>Date</th>
+                <th>Action</th>
             </tr>
             </thead>
 
@@ -143,6 +179,10 @@
                 <td th:text="${p.plan.planName}"></td>
                 <td>₹ <span th:text="${p.amount}"></span></td>
                 <td th:text="${#dates.format(p.paymentDate,'dd-MM-yyyy')}"></td>
+                <td ><button class="btn btn-sm btn-success" th:onclick="'openPaymentModal(' + ${m.id} + ')'">
+                        Add Payment
+                    </button> 
+                </td>
             </tr>
             </tbody>
         </table>
@@ -150,7 +190,12 @@
 
     <!-- ================= NOTIFICATIONS SECTION ================= -->
     <section id="notifications" class="card-section">
-        <h5>All Active Notifications</h5>
+        <div class="card-header">
+            <h5>All Active Notifications</h5>
+            <button class="btn btn-sm btn-warning" onclick="openNotifModal()">
+                + Add Notification
+            </button>
+        </div>
 
         <div class="notif-list">
             <div th:each="n : ${notifications}" class="notif-box">
@@ -159,7 +204,70 @@
             </div>
         </div>
     </section>
-    <!-- बाकी sections (Members / Payments / Notifications) SAME आहेत -->
+</div>
+
+
+<div class="modal fade" id="addPaymentModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-0">
+                <h5>Add Payment</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="payMemberId">
+                <select id="payPlan" class="form-control mb-2">
+                    <option th:each="p:${plans}" th:value="${p.id}" th:text="${p.planName}"></option>
+                </select>
+                <input id="payAmount" class="form-control" placeholder="Amount">
+            </div>
+
+            <div class="modal-footer border-0">
+                <button class="btn btn-success" onclick="savePayment()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light rounded-4">
+            <div class="modal-header border-0">
+                <h5>Add Member</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input id="mName" class="form-control mb-2" placeholder="Name">
+                <input id="mEmail" class="form-control mb-2" placeholder="Email">
+                <input id="mPhone" class="form-control mb-2" placeholder="Phone">
+            </div>
+
+            <div class="modal-footer border-0">
+                <button class="btn btn-success" onclick="saveMember()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addNotifModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-0">
+                <h5>Add Notification</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <textarea id="notifMsg" class="form-control" placeholder="Message"></textarea>
+            </div>
+
+            <div class="modal-footer border-0">
+                <button class="btn btn-success" onclick="saveNotification()">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ================= ADD PLAN MODAL ================= -->
@@ -238,6 +346,50 @@
                 "&price=" + planPrice.value
         }).then(() => location.reload());
     }
+
+    function openAddMemberModal() {
+        new bootstrap.Modal(document.getElementById("addMemberModal")).show();
+    }
+
+    function saveMember() {
+        fetch("/admin/addMember", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body:
+                "name=" + mName.value +
+                "&email=" + mEmail.value +
+                "&phone=" + mPhone.value
+        }).then(() => location.reload());
+    }
+    function openPaymentModal(id) {
+        payMemberId.value = id;
+        new bootstrap.Modal(document.getElementById("addPaymentModal")).show();
+    }
+
+    function savePayment() {
+        fetch("/admin/addPayment", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body:
+                "memberId=" + payMemberId.value +
+                "&planId=" + payPlan.value +
+                "&amount=" + payAmount.value
+        }).then(() => location.reload());
+    }
+
+    function openNotifModal() {
+        new bootstrap.Modal(document.getElementById("addNotifModal")).show();
+    }
+
+    function saveNotification() {
+        fetch("/admin/addNotification", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "message=" + notifMsg.value
+        }).then(() => location.reload());
+    }
+
+
 </script>
 
 </body>

@@ -77,7 +77,23 @@ public class AdminController {
 
         return "admin-dashboard";
     }
+    // =====ADD MEMBER=====
 
+    @PostMapping("/addMember")
+    @ResponseBody
+    public String addMember(HttpSession session, Member member) {
+
+        if (!admin(session)) return "unauthorized";
+
+        memberService.saveMember(member);
+
+        notificationService.save(
+            "New Member Added : " + member.getName(),
+            LocalDate.now().plusDays(2)
+        );
+
+        return "added";
+    }
 
     // ================= MEMBER EDIT =================
     @PostMapping("/editMember")
@@ -173,4 +189,38 @@ public class AdminController {
 
         return ResponseEntity.ok("assigned");
     }
+
+    @PostMapping("/addPayment")
+    @ResponseBody
+    public String addPayment(HttpSession session,
+                            int memberId,
+                            int planId,
+                            double amount) {
+
+        if (!admin(session)) return "unauthorized";
+
+        Member m = memberService.getById(memberId);
+        Plan p = planService.getById(planId);
+
+        paymentService.savePayment(m, p, amount);
+
+        notificationService.save(
+            "Payment added for " + m.getName(),
+            LocalDate.now().plusDays(2)
+        );
+
+        return "added";
+    }
+
+    @PostMapping("/addNotification")
+    @ResponseBody
+    public String addNotification(HttpSession session, String message) {
+
+        if (!admin(session)) return "unauthorized";
+
+        notificationService.save(message, LocalDate.now().plusDays(5));
+        return "added";
+    }
+
+
 }

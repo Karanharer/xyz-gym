@@ -28,7 +28,7 @@
 
     var options = {
         key: /*[[${razorpayKeyId}]]*/ "",
-        amount: /*[[${plan.price}]]*/ 0 * 100,
+        amount: /*[[${plan.price}]]*/ plan.price * 100,
         currency: "INR",
         name: "XYZ Gym",
         description: /*[['' + ${plan.planName} + ' Plan']]*/ "",

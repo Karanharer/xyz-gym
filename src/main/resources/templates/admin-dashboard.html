@@ -1,262 +1,244 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard | XYZ Gym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            background: #0f0f0f;
-            color: #eaeaea;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .notification-bell {
-            position: relative;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .notification-count {
-            position: absolute;
-            top: -6px;
-            right: -10px;
-            background: #ff4d4d;
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 50%;
-        }
-
-        .notification-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 30px;
-            background: #1c1c1c;
-            width: 280px;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        .notification-bell:hover .notification-dropdown {
-            display: block;
-        }
-
-        .notification-item {
-            font-size: 14px;
-            padding: 8px;
-            border-bottom: 1px solid #333;
-        }
-
-        .card {
-            background: linear-gradient(145deg, #1b1b1b, #222);
-            border: none;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-        }
-
-        .table th {
-            color: #bdbdbd;
-            border-bottom: 1px solid #333;
-        }
-
-        .table td {
-            border-bottom: 1px solid #2a2a2a;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
 </head>
 
-<body class="container-fluid p-4">
+<body class="dark">
 
-<!-- ===== HEADER ===== -->
-<div class="dashboard-header">
-    <h3>Admin Dashboard</h3>
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+    <div class="logo">XYZ GYM</div>
 
-    <div class="notification-bell">
-        🔔
-        <span class="notification-count" th:text="${#lists.size(notifications)}"></span>
-        <div class="notification-dropdown">
-            <div th:each="n : ${notifications}"
-                 class="notification-item"
-                 th:text="${n.message}">
+    <a href="#stats" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="#members"><i class="bi bi-people"></i> Members</a>
+    <a href="#payments"><i class="bi bi-credit-card"></i> Payments</a>
+    <a href="#notifications"><i class="bi bi-bell"></i> Notifications</a>
+
+    <!-- ✅ ADD PLAN -->
+    <a href="#" onclick="openAddPlanModal()">
+        <i class="bi bi-plus-circle"></i> Add Plan
+    </a>
+
+    <a th:href="@{/admin/logout}" class="logout">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+
+    <!-- ================= TOP BAR ================= -->
+    <header class="topbar">
+        <button class="menu-btn d-md-none" onclick="toggleSidebar()">☰</button>
+
+        <h4>Admin Dashboard</h4>
+
+        <div class="top-actions">
+            <div class="notification-icon" onclick="toggleNotifPopup()">
+                <i class="bi bi-bell-fill"></i>
+                <span class="count" th:text="${#lists.size(notifications)}"></span>
             </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
+        </div>
+    </header>
+
+    <!-- ================= NOTIFICATION POPUP ================= -->
+    <div class="notif-popup" id="notifPopup">
+        <h6>Notifications</h6>
+
+        <div th:each="n : ${notifications}" class="notif-item">
+            <span th:text="${n.message}"></span>
+            <small th:text="${#temporals.format(n.createdAt,'dd MMM yyyy')}"></small>
         </div>
     </div>
+
+    <!-- ================= STATS ================= -->
+    <section id="stats" class="stats">
+        <div class="stat-card">
+            <h6>Total Members</h6>
+            <h3 th:text="${#lists.size(members)}"></h3>
+        </div>
+
+        <div class="stat-card">
+            <h6>Total Revenue</h6>
+            <h3>₹ <span th:text="${#aggregates.sum(payments.![amount])}"></span></h3>
+        </div>
+
+        <div class="stat-card">
+            <h6>Active Plans</h6>
+            <h3 th:text="${#lists.size(plans)}"></h3>
+        </div>
+    </section>
+
+    <!-- बाकी sections (Members / Payments / Notifications) SAME आहेत -->
 </div>
 
-<!-- ===== MEMBERS ===== -->
-<div class="card p-3">
-    <h4>Members</h4>
-
-    <table class="table table-dark table-hover">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Plan</th>
-            <th width="160">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="m : ${members}">
-            <td th:text="${m.name}"></td>
-            <td th:text="${m.email}"></td>
-            <td th:text="${m.plan != null ? m.plan.planName : 'No Plan'}"></td>
-            <td>
-                <button class="btn btn-sm btn-warning edit-btn"
-                        th:attr="data-id=${m.id},
-                                data-name=${m.name},
-                                data-email=${m.email}">
-                    Edit
-                </button>
-
-                <button class="btn btn-sm btn-danger ms-2"
-                        th:attr="data-id=${m.id}"
-                        onclick="deleteMember(this)">
-                    Delete
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- ===== PAYMENT HISTORY ===== -->
-<div class="card p-3">
-    <h4>Payment History</h4>
-
-    <table class="table table-dark">
-        <thead>
-        <tr>
-            <th>Member</th>
-            <th>Plan</th>
-            <th>Amount</th>
-            <th>Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="p : ${payments}">
-            <td th:text="${p.member.name}"></td>
-            <td th:text="${p.plan != null ? p.plan.planName : 'N/A'}"></td>
-            <td th:text="'₹' + ${p.amount}"></td>
-            <td th:text="${p.PaymentDate}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- ===== REVENUE ===== -->
-<div class="card p-3">
-    <h4>Plan Wise Revenue</h4>
-    <canvas id="revenueChart"></canvas>
-</div>
-
-<!-- ===== EDIT MEMBER MODAL ===== -->
-<div class="modal fade" id="editMemberModal" tabindex="-1">
+<!-- ================= ADD PLAN MODAL ================= -->
+<div class="modal fade" id="addPlanModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-                <h5>Edit Member</h5>
+        <div class="modal-content bg-dark text-light rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Add New Plan</h5>
                 <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-                <input type="hidden" id="mid">
-                <input id="mname" class="form-control mb-2 bg-secondary text-white" placeholder="Name">
-                <input id="memail" class="form-control bg-secondary text-white" placeholder="Email">
+                <input id="planName" class="form-control mb-3" placeholder="Plan Name">
+                <input id="planDuration" type="number" class="form-control mb-3" placeholder="Duration (Months)">
+                <input id="planPrice" type="number" class="form-control" placeholder="Price (₹)">
             </div>
 
-            <div class="modal-footer">
-                <button class="btn btn-success" onclick="saveMember()">Save</button>
+            <div class="modal-footer border-0">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" onclick="savePlan()">Save Plan</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ===== JS ===== -->
-<script th:inline="javascript">
-/*<![CDATA[*/
+<!-- ================= MEMBERS ================= -->
+    <section id="members" class="card-section">
+        <div class="card-header">
+            <h5>Members</h5>
+            <input type="text" id="memberSearch" placeholder="Search member">
+        </div>
 
-const labels = [[${chartLabels}]];
-const values = [[${chartValues}]];
+        <table class="table table-dark table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Expiry</th>
+                <th>Action</th>
+            </tr>
+            </thead>
 
-new Chart(document.getElementById("revenueChart"), {
-    type: 'bar',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Revenue',
-            data: values,
-            backgroundColor: '#4caf50'
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false }
-        }
-    }
-});
+            <tbody id="memberTable">
+            <tr th:each="m : ${members}">
+                <td th:text="${m.name}"></td>
+                <td th:text="${m.email}"></td>
+                <td th:text="${m.plan != null ? m.plan.planName : 'NA'}"></td>
+                <td th:text="${m.expiryDate}"></td>
+                <td>
+                    <button class="btn btn-sm btn-danger"
+                            th:onclick="'deleteMember(' + ${m.id} + ')'">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
 
-/*]]>*/
-</script>
+    <!-- ================= PAYMENTS ================= -->
+    <section id="payments" class="card-section">
+        <div class="card-header">
+            <h5>Payments</h5>
+            <button class="btn btn-sm btn-success" onclick="exportCSV()">Export CSV</button>
+        </div>
 
+        <table class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th>Member</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+            </thead>
 
+            <tbody>
+            <tr th:each="p : ${payments}">
+                <td th:text="${p.member.name}"></td>
+                <td th:text="${p.plan.planName}"></td>
+                <td>₹ <span th:text="${p.amount}"></span></td>
+                <td th:text="${#dates.format(p.paymentDate,'dd-MM-yyyy')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ================= NOTIFICATIONS SECTION ================= -->
+    <section id="notifications" class="card-section">
+        <h5>All Active Notifications</h5>
+
+        <div class="notif-list">
+            <div th:each="n : ${notifications}" class="notif-box">
+                <b th:text="${n.message}"></b>
+                <small th:text="${#temporals.format(n.createdAt,'dd MMM yyyy')}"></small>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ================= JS ================= -->
 <script>
-/* ===== EDIT MEMBER ===== */
-document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('mid').value = btn.dataset.id;
-        document.getElementById('mname').value = btn.dataset.name;
-        document.getElementById('memail').value = btn.dataset.email;
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+    }
 
-        new bootstrap.Modal(
-            document.getElementById('editMemberModal')
-        ).show();
+    function toggleTheme() {
+        document.body.classList.toggle("light");
+    }
+
+    function toggleNotifPopup() {
+        document.getElementById("notifPopup").classList.toggle("show");
+    }
+
+    // Member search
+    document.getElementById("memberSearch").addEventListener("keyup", function () {
+        let val = this.value.toLowerCase();
+        document.querySelectorAll("#memberTable tr").forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
+        });
     });
-});
 
-/* ===== SAVE MEMBER ===== */
-function saveMember() {
-    fetch("/admin/editMember", {
-        method: "POST",
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `id=${mid.value}&name=${mname.value}&email=${memail.value}`
-    }).then(() => location.reload());
-}
+    // Export CSV
+    function exportCSV() {
+        let csv = "Member,Plan,Amount,Date\n";
+        document.querySelectorAll("#payments tbody tr").forEach(row => {
+            let cols = row.querySelectorAll("td");
+            csv += `${cols[0].innerText},${cols[1].innerText},${cols[2].innerText},${cols[3].innerText}\n`;
+        });
 
-/* ===== DELETE MEMBER ===== */
-function deleteMember(btn) {
-    if (!confirm("Delete Member?")) return;
+        let blob = new Blob([csv], { type: "text/csv" });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "payments.csv";
+        a.click();
+    }
 
-    fetch("/admin/deleteMember", {
-        method: "POST",
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `id=${btn.dataset.id}`
-    }).then(() => location.reload());
-}
+    function openAddPlanModal() {
+        new bootstrap.Modal(document.getElementById("addPlanModal")).show();
+    }
+
+    function savePlan() {
+        fetch("/admin/addPlan", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body:
+                "planName=" + planName.value +
+                "&durationMonths=" + planDuration.value +
+                "&price=" + planPrice.value
+        }).then(() => location.reload());
+    }
 </script>
 
 </body>

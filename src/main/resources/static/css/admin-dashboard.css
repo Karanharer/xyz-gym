@@ -1,0 +1,318 @@
+/* =============================
+   ROOT THEME
+============================= */
+:root {
+    --accent: #ff6f00;
+    --accent-glow: rgba(255,111,0,0.35);
+
+    --bg-main: #0b0d12;
+    --bg-card: #161a23;
+    --bg-soft: #1f2430;
+
+    --text-main: #f8fafc;
+    --text-muted: #9aa4b2;
+
+    --radius-xl: 22px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+
+    --transition: 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+/* =============================
+   LIGHT MODE
+============================= */
+body.light {
+    --bg-main: #f5f7fb;
+    --bg-card: #ffffff;
+    --bg-soft: #eef1f7;
+
+    --text-main: #0f172a;
+    --text-muted: #475569;
+}
+
+/* =============================
+   GLOBAL
+============================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(1200px 600px at top right, #151a28, var(--bg-main));
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* =============================
+   SIDEBAR
+============================= */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 260px;
+    background: linear-gradient(180deg, #121624, #0d101a);
+    padding: 24px 18px;
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.sidebar .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.sidebar a i {
+    font-size: 1.2rem;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: linear-gradient(135deg, rgba(255,111,0,0.18), rgba(255,61,0,0.15));
+    color: var(--text-main);
+    box-shadow: 0 0 0 1px rgba(255,111,0,0.25),
+                0 12px 30px rgba(255,111,0,0.15);
+}
+
+.sidebar .logout {
+    margin-top: 40px;
+    background: linear-gradient(135deg, #ff7a00, #ff3d00);
+    color: #fff;
+    justify-content: center;
+}
+
+/* Mobile sidebar */
+.sidebar.open {
+    transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+/* =============================
+   MAIN
+============================= */
+.main {
+    margin-left: 260px;
+    padding: 28px;
+    transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin-left: 0;
+    }
+}
+
+/* =============================
+   TOP BAR
+============================= */
+.topbar {
+    height: 70px;
+    background: linear-gradient(180deg, #14182a, #0f1322);
+    border-radius: var(--radius-xl);
+    padding: 0 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
+}
+
+.topbar h4 {
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1.7rem;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* =============================
+   NOTIFICATION ICON
+============================= */
+.notification-icon {
+    position: relative;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--text-main);
+}
+
+.notification-icon .count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: linear-gradient(135deg, #ff7a00, #ff3d00);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--bg-main);
+}
+
+/* =============================
+   NOTIFICATION POPUP
+============================= */
+.notif-popup {
+    position: fixed;
+    right: 32px;
+    top: 90px;
+    width: 320px;
+    background: linear-gradient(180deg, #1c2133, #14182a);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    transition: var(--transition);
+    z-index: 2000;
+}
+
+.notif-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.notif-popup h6 {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.notif-item {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.04);
+    margin-bottom: 10px;
+}
+
+.notif-item small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* =============================
+   STATS
+============================= */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 24px;
+    margin-bottom: 36px;
+}
+
+.stat-card {
+    background: linear-gradient(160deg, #1e2336, #15192a);
+    padding: 28px;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -40% -60% auto;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--accent-glow), transparent 60%);
+}
+
+.stat-card h6 {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.stat-card h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+/* =============================
+   MODAL (ADD PLAN)
+============================= */
+.modal-content {
+    background: linear-gradient(180deg, #1b2034, #12162a);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+}
+
+.modal input {
+    background: #0f1324;
+    border: 1px solid #2a3050;
+    color: #fff;
+    border-radius: var(--radius-md);
+}
+
+.modal input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* =============================
+   BUTTONS
+============================= */
+.btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border: none;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background: #2a3048;
+    border: none;
+}
+
+/* =============================
+   SCROLLBAR
+============================= */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff7a00, #ff3d00);
+    border-radius: 10px;
+}

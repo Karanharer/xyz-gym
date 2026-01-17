@@ -21,4 +21,5 @@ public interface MemberService {
     long getTotalMembers();
 
     void assignPlanToMember(int memberId, int planId);
+
 }

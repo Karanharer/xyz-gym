@@ -1,5 +1,13 @@
 FROM eclipse-temurin:17-jdk
+
 WORKDIR /app
-COPY target/*.jar app.jar
+
+# Copy full project
+COPY . .
+
+# Build jar
+RUN ./mvnw clean package
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+ENTRYPOINT ["java","-jar","target/*.jar"]
